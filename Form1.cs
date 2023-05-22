@@ -4,10 +4,12 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
+using System.IO;
 
 
 namespace game
@@ -18,6 +20,7 @@ namespace game
         int count;
         bool gameIsActive;
         Random rand = new Random();
+        SoundPlayer clickSoundPlayer;
 
         List<PictureBox> items = new List<PictureBox>();
         public Form1()
@@ -26,6 +29,9 @@ namespace game
             score = 0;
             count = 0;
             gameIsActive = true;
+
+            string soundFilePath = Path.Combine(Application.StartupPath, "files/PopSound.wav");
+            clickSoundPlayer = new SoundPlayer(soundFilePath);
         }
 
         private void MakePictureBox()
@@ -69,7 +75,6 @@ namespace game
             ++count;
         }
 
-
         private void NewPicClick(object sender, EventArgs e)
         {
             PictureBox tempPic = sender as PictureBox;
@@ -95,6 +100,9 @@ namespace game
             --count;
 
             Score_Label.Text = "Score: " + score;
+
+            // Play the click sound
+            clickSoundPlayer.Play();
         }
 
         private void RestartGame()
