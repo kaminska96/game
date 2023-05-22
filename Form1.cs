@@ -19,14 +19,13 @@ namespace game
         Random rand = new Random();
 
         List<PictureBox> items = new List<PictureBox>();
-        //List<Rectangle> items = new List<Rectangle>();
         public Form1()
         {
             InitializeComponent();
             score = 0;
             count = 0;
+            gameIsActive = true;
 
-            //RestartGame();
         }
 
         private void MakePictureBox()
@@ -87,15 +86,20 @@ namespace game
 
         }
 
-        private void StartGame()
-        {
-            score = 0;
-            gameIsActive = true;
-        }
         private void RestartGame()
         {
+            foreach(PictureBox p in items)
+                this.Controls.Remove(p);
+            items.Clear();
+            score = 0;
+            count = 0;
+            gameIsActive = true;
+            timer1.Start();
+            timer2.Start();
 
+            Score_Label.Text = "Score: " + score;
         }
+
         private void label1_Click(object sender, EventArgs e)
         {
 
@@ -104,6 +108,20 @@ namespace game
         private void timer1_Tick(object sender, EventArgs e)
         {
             MakePictureBox();
+            if (score <= -100)
+            {
+                gameIsActive = false;
+                timer1.Stop();
+                DialogResult result = MessageBox.Show("You click on Green a lot. Play again?", "GAME OVER", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    RestartGame();
+                }
+                else
+                {
+                    Close();
+                }
+            }
         }
 
         private void timer2_Tick(object sender, EventArgs e)
@@ -121,6 +139,21 @@ namespace game
                 --count;
             }
             Score_Label.Text = "Score: " + score;
+            if (score <= -100)
+            {
+                gameIsActive = false;
+                timer1.Stop();
+                timer2.Stop();
+                DialogResult result = MessageBox.Show("You missed a lot. Play again?", "GAME OVER", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    RestartGame();
+                }
+                else
+                {
+                    Close();
+                }
+            }
         }
     }
 }
