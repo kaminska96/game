@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 
 namespace game
@@ -25,7 +26,6 @@ namespace game
             score = 0;
             count = 0;
             gameIsActive = true;
-
         }
 
         private void MakePictureBox()
@@ -33,8 +33,10 @@ namespace game
             PictureBox newPic = new PictureBox();
             newPic.Height = 50;
             newPic.Width = 50;
+
             int color = rand.Next(1, 5);
-            switch (color) {
+            switch (color)
+            {
                 case 1:
                     newPic.BackColor = Color.Red;
                     break;
@@ -53,17 +55,27 @@ namespace game
             int y = rand.Next(10, this.ClientSize.Height - newPic.Height);
             newPic.Location = new Point(x, y);
 
+            newPic.Paint += new PaintEventHandler((sender, e) =>
+            {
+                GraphicsPath path = new GraphicsPath();
+                path.AddEllipse(0, 0, newPic.Width - 1, newPic.Height - 1);
+                Region region = new Region(path);
+                newPic.Region = region;
+            });
+
             newPic.Click += NewPicClick;
             items.Add(newPic);
             this.Controls.Add(newPic);
             ++count;
         }
 
+
         private void NewPicClick(object sender, EventArgs e)
         {
             PictureBox tempPic = sender as PictureBox;
 
-            if (tempPic.BackColor == Color.Red) {
+            if (tempPic.BackColor == Color.Red)
+            {
                 score += 10;
             }
             else if (tempPic.BackColor == Color.Yellow)
@@ -83,12 +95,11 @@ namespace game
             --count;
 
             Score_Label.Text = "Score: " + score;
-
         }
 
         private void RestartGame()
         {
-            foreach(PictureBox p in items)
+            foreach (PictureBox p in items)
                 this.Controls.Remove(p);
             items.Clear();
             score = 0;
@@ -112,7 +123,7 @@ namespace game
             {
                 gameIsActive = false;
                 timer1.Stop();
-                DialogResult result = MessageBox.Show("You click on Green a lot. Play again?", "GAME OVER", MessageBoxButtons.YesNo);
+                DialogResult result = MessageBox.Show("You clicked on Green a lot. Play again?", "GAME OVER", MessageBoxButtons.YesNo);
                 if (result == DialogResult.Yes)
                 {
                     RestartGame();
@@ -128,17 +139,23 @@ namespace game
         {
             if (items.Count != 0)
             {
-                items.RemoveAt(0);
                 this.Controls.Remove(items[0]);
+                items.RemoveAt(0);
 
-                if(items[0].BackColor != Color.Green)
+                if (items.Count != 0 && items[0].BackColor != Color.Green)
                 {
                     score -= 50;
                 }
 
                 --count;
             }
+            else
+            {
+                return;
+            }
+
             Score_Label.Text = "Score: " + score;
+
             if (score <= -100)
             {
                 gameIsActive = false;
