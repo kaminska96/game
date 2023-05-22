@@ -5,12 +5,12 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Media;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Drawing2D;
-using System.IO;
-
 
 namespace game
 {
@@ -20,6 +20,7 @@ namespace game
         int count;
         bool gameIsActive;
         Random rand = new Random();
+        string soundFilePath;
         SoundPlayer clickSoundPlayer;
 
         List<PictureBox> items = new List<PictureBox>();
@@ -30,7 +31,8 @@ namespace game
             count = 0;
             gameIsActive = true;
 
-            string soundFilePath = Path.Combine(Application.StartupPath, "files/PopSound.wav");
+            string baseDirectory = Directory.GetParent(Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName).FullName).FullName;
+            soundFilePath = Path.Combine(baseDirectory, "files", "PopSound.wav");
             clickSoundPlayer = new SoundPlayer(soundFilePath);
         }
 
